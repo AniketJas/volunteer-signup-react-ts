@@ -1,8 +1,13 @@
+
 import { useState } from "react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
+import { Button } from "../components/ui/button";
 import VolunteerSignup from "../components/VolunteerSignup";
 import AdminDashboard from "../components/AdminDashboard";
 import AdminLogin from "../components/AdminLogin";
 import { useAuth } from "../contexts/AuthContext";
+import { Heart, Users, Clock, LogOut } from "lucide-react";
 
 const Index = () => {
   const [activeView, setActiveView] = useState("volunteer");
@@ -13,6 +18,7 @@ const Index = () => {
     setActiveView("volunteer");
   };
 
+  // Show admin login if trying to access admin tab but not logged in
   if (activeView === "admin" && !isAdminLoggedIn) {
     return <AdminLogin />;
   }
@@ -25,7 +31,7 @@ const Index = () => {
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <div className="w-10 h-10 bg-green-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-lg">FB</span>
+                <Heart className="w-6 h-6 text-white" />
               </div>
               <div>
                 <h1 className="text-xl font-bold text-gray-900">FoodBridge</h1>
@@ -36,20 +42,23 @@ const Index = () => {
               {isAdminLoggedIn && (
                 <div className="flex items-center space-x-2">
                   <span className="text-sm text-gray-600">Welcome, {adminEmail}</span>
-                  <button
+                  <Button
+                    variant="outline"
+                    size="sm"
                     onClick={handleLogout}
-                    className="flex items-center gap-2 px-3 py-1 border rounded text-sm text-gray-700 hover:bg-gray-100"
+                    className="flex items-center gap-2"
                   >
+                    <LogOut className="w-4 h-4" />
                     Logout
-                  </button>
+                  </Button>
                 </div>
               )}
               <div className="flex items-center text-sm text-gray-600">
-                <span className="mr-1">👥</span>
+                <Users className="w-4 h-4 mr-1" />
                 <span>127 volunteers</span>
               </div>
               <div className="flex items-center text-sm text-gray-600">
-                <span className="mr-1">⏰</span>
+                <Clock className="w-4 h-4 mr-1" />
                 <span>48 shifts this week</span>
               </div>
             </div>
@@ -69,73 +78,71 @@ const Index = () => {
           </p>
         </div>
 
-        {/* Tabs */}
-        <div className="w-full">
-          <div className="grid w-full max-w-md grid-cols-2 mb-8 gap-2">
-            <button
-              className={`px-4 py-2 text-sm border rounded ${activeView === "volunteer" ? "bg-white text-blue-700 font-semibold" : "bg-gray-100 text-gray-700"}`}
-              onClick={() => setActiveView("volunteer")}
-            >
+        <Tabs value={activeView} onValueChange={setActiveView} className="w-full">
+          <TabsList className="grid w-full max-w-md grid-cols-2 mb-8">
+            <TabsTrigger value="volunteer" className="text-sm">
               Volunteer Signup
-            </button>
-            <button
-              className={`px-4 py-2 text-sm border rounded ${activeView === "admin" ? "bg-white text-blue-700 font-semibold" : "bg-gray-100 text-gray-700"}`}
-              onClick={() => setActiveView("admin")}
-            >
+            </TabsTrigger>
+            <TabsTrigger value="admin" className="text-sm">
               Admin Dashboard
-            </button>
-          </div>
+            </TabsTrigger>
+          </TabsList>
 
-          {activeView === "volunteer" && (
-            <div className="space-y-6">
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-                {[
-                  {
-                    title: "Food Pickup",
-                    desc: "Collect surplus food from partner restaurants and grocers",
-                    count: 12,
-                    color: "green",
-                  },
-                  {
-                    title: "Food Sorting",
-                    desc: "Sort and package donations at our distribution center",
-                    count: 8,
-                    color: "blue",
-                  },
-                  {
-                    title: "Delivery",
-                    desc: "Deliver food packages to families and community centers",
-                    count: 15,
-                    color: "purple",
-                  },
-                ].map(({ title, desc, count, color }) => (
-                  <div
-                    key={title}
-                    className={`border border-${color}-200 bg-${color}-50 p-4 rounded`}
-                  >
-                    <h3 className={`text-lg font-semibold text-${color}-800`}>{title}</h3>
-                    <p className={`text-sm text-${color}-600 mb-2`}>{desc}</p>
-                    <div className={`text-2xl font-bold text-${color}-700`}>{count}</div>
-                    <div className={`text-sm text-${color}-600`}>shifts available this week</div>
-                  </div>
-                ))}
+          <TabsContent value="volunteer" className="space-y-6">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+              <Card className="border-green-200 bg-green-50">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-lg text-green-800">Food Pickup</CardTitle>
+                  <CardDescription className="text-green-600">
+                    Collect surplus food from partner restaurants and grocers
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold text-green-700">12</div>
+                  <div className="text-sm text-green-600">shifts available this week</div>
+                </CardContent>
+              </Card>
+
+              <Card className="border-blue-200 bg-blue-50">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-lg text-blue-800">Food Sorting</CardTitle>
+                  <CardDescription className="text-blue-600">
+                    Sort and package donations at our distribution center
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold text-blue-700">8</div>
+                  <div className="text-sm text-blue-600">shifts available this week</div>
+                </CardContent>
+              </Card>
+
+              <Card className="border-purple-200 bg-purple-50">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-lg text-purple-800">Delivery</CardTitle>
+                  <CardDescription className="text-purple-600">
+                    Deliver food packages to families and community centers
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold text-purple-700">15</div>
+                  <div className="text-sm text-purple-600">shifts available this week</div>
+                </CardContent>
+              </Card>
+            </div>
+
+            <VolunteerSignup />
+          </TabsContent>
+
+          <TabsContent value="admin" className="space-y-6">
+            {isAdminLoggedIn ? (
+              <AdminDashboard />
+            ) : (
+              <div className="text-center py-8">
+                <p className="text-gray-600">Please log in to access the admin dashboard.</p>
               </div>
-              <VolunteerSignup />
-            </div>
-          )}
-
-          {activeView === "admin" && (
-            <div className="space-y-6">
-              {isAdminLoggedIn ? (
-                <AdminDashboard />
-              ) : (
-                <div className="text-center py-8">
-                  <p className="text-gray-600">Please log in to access the admin dashboard.</p>
-                </div>
-              )}
-            </div>
-          )}
-        </div>
+            )}
+          </TabsContent>
+        </Tabs>
       </main>
     </div>
   );

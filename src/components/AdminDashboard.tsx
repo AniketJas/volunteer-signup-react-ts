@@ -1,4 +1,10 @@
 import { useState, useEffect } from "react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card";
+import { Button } from "../components/ui/button";
+import { Badge } from "../components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../components/ui/table";
+import { Users, Calendar, Clock, CheckCircle, Download, FileJson } from "lucide-react";
 import { getVolunteersData, updateVolunteerStatus, downloadVolunteersJSON, downloadAdminLoginsJSON } from "../utils/dataManager";
 
 interface Volunteer {
@@ -59,6 +65,7 @@ const AdminDashboard = () => {
   const [selectedTab, setSelectedTab] = useState("volunteers");
 
   useEffect(() => {
+    // Load volunteers from localStorage on component mount
     const savedVolunteers = getVolunteersData();
     setVolunteers(savedVolunteers);
   }, []);
@@ -80,7 +87,7 @@ const AdminDashboard = () => {
       `${volunteer.firstName} ${volunteer.lastName}`,
       volunteer.email,
       volunteer.phone,
-      Array.isArray(volunteer.skills) ? volunteer.skills.join('; ') : '',
+      volunteer.skills.join('; '),
       volunteer.availability,
       volunteer.registrationDate,
       volunteer.status,
@@ -122,46 +129,218 @@ const AdminDashboard = () => {
 
   return (
     <div className="space-y-6">
-      {/* Overview */}
+      {/* Overview Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        {[
-          { icon: "👥", label: 'Total Volunteers', value: volunteers.length },
-          { icon: "✅", label: 'Active This Week', value: volunteers.filter(v => v.status === "active").length },
-          { icon: "📅", label: 'Pending Approval', value: volunteers.filter(v => v.status === "pending").length },
-          { icon: "⏰", label: 'Approved', value: volunteers.filter(v => v.status === "approved").length },
-        ].map(({ icon, label, value }) => (
-          <div className="p-6 bg-white rounded shadow border" key={label}>
+        <Card>
+          <CardContent className="p-6">
             <div className="flex items-center">
-              <span className="text-2xl">{icon}</span>
+              <Users className="h-8 w-8 text-blue-600" />
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">{label}</p>
-                <p className="text-2xl font-bold text-gray-900">{value}</p>
+                <p className="text-sm font-medium text-gray-600">Total Volunteers</p>
+                <p className="text-2xl font-bold text-gray-900">{volunteers.length}</p>
               </div>
             </div>
-          </div>
-        ))}
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex items-center">
+              <CheckCircle className="h-8 w-8 text-green-600" />
+              <div className="ml-4">
+                <p className="text-sm font-medium text-gray-600">Active This Week</p>
+                <p className="text-2xl font-bold text-gray-900">
+                  {volunteers.filter(v => v.status === "active").length}
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex items-center">
+              <Calendar className="h-8 w-8 text-purple-600" />
+              <div className="ml-4">
+                <p className="text-sm font-medium text-gray-600">Pending Approval</p>
+                <p className="text-2xl font-bold text-gray-900">
+                  {volunteers.filter(v => v.status === "pending").length}
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex items-center">
+              <Clock className="h-8 w-8 text-orange-600" />
+              <div className="ml-4">
+                <p className="text-sm font-medium text-gray-600">Approved</p>
+                <p className="text-2xl font-bold text-gray-900">
+                  {volunteers.filter(v => v.status === "approved").length}
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
-      {/* Tabs */}
-      <div className="mt-6">
-        <div className="flex gap-4 border-b">
-          <button
-            className={`pb-2 border-b-2 text-sm ${selectedTab === 'volunteers' ? 'border-blue-600 text-blue-600' : 'border-transparent text-gray-600'}`}
-            onClick={() => setSelectedTab('volunteers')}
-          >
-            Volunteers
-          </button>
-          <button
-            className={`pb-2 border-b-2 text-sm ${selectedTab === 'shifts' ? 'border-blue-600 text-blue-600' : 'border-transparent text-gray-600'}`}
-            onClick={() => setSelectedTab('shifts')}
-          >
-            Shifts
-          </button>
-        </div>
+      {/* Main Dashboard */}
+      <Tabs value={selectedTab} onValueChange={setSelectedTab}>
+        <TabsList>
+          <TabsTrigger value="volunteers">Volunteers</TabsTrigger>
+          <TabsTrigger value="shifts">Shifts</TabsTrigger>
+        </TabsList>
 
-        {/* ... rest of component remains unchanged ... */}
+        <TabsContent value="volunteers" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <div className="flex justify-between items-center">
+                <div>
+                  <CardTitle>Volunteer Management</CardTitle>
+                  <CardDescription>
+                    View all volunteers and manage their applications
+                  </CardDescription>
+                </div>
+                <div className="flex gap-2">
+                  <Button onClick={downloadVolunteersCSV} className="flex items-center gap-2">
+                    <Download className="h-4 w-4" />
+                    Download CSV
+                  </Button>
+                  <Button onClick={downloadVolunteersJSON} variant="outline" className="flex items-center gap-2">
+                    <FileJson className="h-4 w-4" />
+                    Download JSON
+                  </Button>
+                  <Button onClick={downloadAdminLoginsJSON} variant="outline" className="flex items-center gap-2">
+                    <FileJson className="h-4 w-4" />
+                    Admin Logins JSON
+                  </Button>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent>
+              {volunteers.length === 0 ? (
+                <div className="text-center py-8">
+                  <p className="text-gray-600">No volunteers registered yet.</p>
+                </div>
+              ) : (
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Name</TableHead>
+                      <TableHead>Contact</TableHead>
+                      <TableHead>Skills</TableHead>
+                      <TableHead>Availability</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Shifts</TableHead>
+                      <TableHead>Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {volunteers.map((volunteer) => (
+                      <TableRow key={volunteer.id}>
+                        <TableCell>
+                          <div>
+                            <div className="font-medium">{volunteer.firstName} {volunteer.lastName}</div>
+                            <div className="text-sm text-gray-500">
+                              Registered: {formatDate(volunteer.registrationDate)}
+                            </div>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="text-sm">
+                            <div>{volunteer.email}</div>
+                            <div className="text-gray-500">{volunteer.phone}</div>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          {/* <div className="text-sm">{volunteer.skills.join(", ")}</div> */}
+                          <div className="text-sm">
+                            {Array.isArray(volunteer.skills) ? volunteer.skills.join(", ") : String(volunteer.skills)}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="text-sm">{volunteer.availability}</div>
+                        </TableCell>
+                        <TableCell>
+                          <Badge className={getStatusColor(volunteer.status)}>
+                            {volunteer.status}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <div className="text-sm font-medium">{volunteer.assignedShifts}</div>
+                        </TableCell>
+                        <TableCell>
+                          {volunteer.status === "pending" && (
+                            <Button
+                              size="sm"
+                              onClick={() => approveVolunteer(volunteer.id)}
+                              className="bg-green-600 hover:bg-green-700"
+                            >
+                              Approve
+                            </Button>
+                          )}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
 
-      </div>
+        <TabsContent value="shifts" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Shift Management</CardTitle>
+              <CardDescription>
+                View and manage volunteer shift assignments
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {mockShifts.map((shift) => (
+                  <div key={shift.id} className="border border-gray-200 rounded-lg p-4">
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <div className="flex items-center mb-2">
+                          <h4 className="font-medium text-gray-900">{shift.type}</h4>
+                          <Badge variant="outline" className="ml-2">
+                            {shift.volunteers.length}/{shift.maxVolunteers} volunteers
+                          </Badge>
+                        </div>
+                        <div className="text-sm text-gray-600 space-y-1">
+                          <div>
+                            <span className="font-medium">Date & Time:</span> {formatDate(shift.date)} • {shift.time}
+                          </div>
+                          <div>
+                            <span className="font-medium">Location:</span> {shift.location}
+                          </div>
+                          <div>
+                            <span className="font-medium">Assigned Volunteers:</span> {
+                              shift.volunteers.length > 0 ? shift.volunteers.join(", ") : "None assigned"
+                            }
+                          </div>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <div className={`text-sm font-medium ${shift.volunteers.length >= shift.maxVolunteers
+                          ? "text-green-600"
+                          : "text-orange-600"
+                          }`}>
+                          {shift.volunteers.length >= shift.maxVolunteers ? "Fully Staffed" : "Needs Volunteers"}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };

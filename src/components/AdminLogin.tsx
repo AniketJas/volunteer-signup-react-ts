@@ -1,5 +1,11 @@
+
 import { useState } from 'react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
+import { Button } from '../components/ui/button';
+import { Input } from '../components/ui/input';
+import { Label } from '../components/ui/label';
 import { useAuth } from '../contexts/AuthContext';
+import { Lock, AlertCircle } from 'lucide-react';
 
 const AdminLogin = () => {
   const [email, setEmail] = useState('');
@@ -8,11 +14,12 @@ const AdminLogin = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { login } = useAuth();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     setIsLoading(true);
 
+    // Simulate loading delay
     setTimeout(() => {
       const success = login(email, password);
       if (!success) {
@@ -24,57 +31,59 @@ const AdminLogin = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 flex items-center justify-center px-4">
-      <div className="w-full max-w-md bg-white rounded-lg shadow p-6">
-        <div className="text-center mb-6">
+      <Card className="w-full max-w-md">
+        <CardHeader className="text-center">
           <div className="w-12 h-12 bg-green-600 rounded-lg flex items-center justify-center mx-auto mb-4">
-            <span className="text-white text-xl font-bold">🔒</span>
+            <Lock className="w-6 h-6 text-white" />
           </div>
-          <h2 className="text-2xl font-semibold">Admin Login</h2>
-          <p className="text-sm text-gray-500">Sign in to access the FoodBridge admin dashboard</p>
-        </div>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-            <input
-              id="email"
-              type="email"
-              placeholder="admin@ngo.org"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className="w-full px-3 py-2 border rounded focus:outline-none focus:ring focus:border-blue-300"
-            />
-          </div>
-          <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">Password</label>
-            <input
-              id="password"
-              type="password"
-              placeholder="Enter your password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              className="w-full px-3 py-2 border rounded focus:outline-none focus:ring focus:border-blue-300"
-            />
-          </div>
-          {error && (
-            <div className="flex items-center gap-2 text-red-600 text-sm">
-              <span className="text-lg">⚠️</span>
-              {error}
+          <CardTitle className="text-2xl">Admin Login</CardTitle>
+          <CardDescription>
+            Sign in to access the FoodBridge admin dashboard
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="email">Email</Label>
+              <Input
+                id="email"
+                type="email"
+                placeholder="admin@ngo.org"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
             </div>
-          )}
-          <button
-            type="submit"
-            disabled={isLoading}
-            className="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded transition"
-          >
-            {isLoading ? 'Signing in...' : 'Sign In'}
-          </button>
-        </form>
-        <div className="mt-4 text-xs text-gray-500 text-center">
-          Demo credentials: admin@ngo.org / admin123
-        </div>
-      </div>
+            <div className="space-y-2">
+              <Label htmlFor="password">Password</Label>
+              <Input
+                id="password"
+                type="password"
+                placeholder="Enter your password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+            </div>
+            {error && (
+              <div className="flex items-center gap-2 text-red-600 text-sm">
+                <AlertCircle className="w-4 h-4" />
+                {error}
+              </div>
+            )}
+            <Button
+              type="submit"
+              className="w-full"
+              disabled={isLoading}
+            >
+              {isLoading ? 'Signing in...' : 'Sign In'}
+            </Button>
+          </form>
+          <div className="mt-4 text-xs text-gray-500 text-center">
+            Demo credentials: admin@ngo.org / admin123
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 };
