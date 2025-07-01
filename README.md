@@ -1,9 +1,14 @@
-
 # 👐 Volunteer Signup MVP
 
 A lightweight React + TypeScript web app designed to help local NGOs manage volunteer registrations for food donation drives and community service events.
 
 This MVP focuses on simplifying the volunteer signup process and providing an easy way for NGO admins to view and manage signups — all without needing a backend.
+
+---
+
+## 🖥️ Live Demo
+
+🔗 [Check it out here](https://volunteer-signup-react-ts.vercel.app/)
 
 ---
 
@@ -25,20 +30,13 @@ This MVP focuses on simplifying the volunteer signup process and providing an ea
 
 ## 🖼️ Screenshots
 
-### 📝 Volunteer Signup Form  
-![Volunteer Signup Form](./screenshots/volunteer-signup.png)
+### 📝 Volunteer Signup Form
 
-### 🧑‍💼 Admin View  
-![Admin View](./screenshots/admin-view.png)
+![Volunteer Signup Form](./screenshots/volunteer-signup-form.png)
 
-> Make sure to add the above screenshots in a `/screenshots` folder in the root of your project.
+### 🧑‍💼 Admin Dashboard
 
----
-
-## 🖥️ Live Demo
-
-🔗 [Check it out here](https://your-vercel-deployment-url.vercel.app)  
-_(Replace with your actual deployed URL)_
+![Admin View](./screenshots/admin-dashboard.png)
 
 ---
 
@@ -52,8 +50,8 @@ _(Replace with your actual deployed URL)_
 ### 📦 Clone and Setup
 
 ```bash
-git clone https://github.com/your-username/volunteer-signup-mvp.git
-cd volunteer-signup-mvp
+git clone https://github.com/your-username/volunteer-signup-react-ts.git
+cd volunteer-signup-react-ts
 npm install
 # or
 yarn install
@@ -79,7 +77,6 @@ src/
 ├── components/        # UI Components
 ├── pages/             # Volunteer & Admin Tabs
 ├── utils/             # Data management (localStorage)
-├── types/             # TypeScript interfaces
 ```
 
 ---
@@ -101,16 +98,4 @@ src/
 
 ---
 
-## 🙌 Contributing
-
-Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
-
----
-
-## 📄 License
-
-This project is licensed under the MIT License — feel free to use and modify.
-
----
-
-Made with ❤️ to support community-driven efforts.
+Made with ❤️ by Aniket Jas.
